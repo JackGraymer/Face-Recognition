@@ -5,9 +5,11 @@ Implementation of a face recognition system on low-resource devices, such as sma
 ## Overfitting
 
 Tackled by implementing: 
-- Dropout
-- Early Stopping
-- Learning Rate Scheduler: adjust the learning rate during training based on validation loss
+- Dropout layers: randomly set a fraction (0.4) of input units to 0 during training.
+- Early Stopping: stop training when validation loss stops improving.
+- Learning Rate Scheduler: adjust the learning rate during training based on validation loss (smaller than Early Stopping patience).
+- Batch Normalization: stabilize activations and accelerate convergence
+- Unfrozen layers: only the last few layers of the model are trained, while the rest are frozen to retain low-level feature extraction.
 
 ### Data Augmentation
 
@@ -24,6 +26,10 @@ Noticed that some models perform closer to 100% accuracy when trained and tested
 This overfitting might be caused due to a `data leakage` issue, where the model has access to information about the test set during training. This happens on the augmented dataset, as for every original picture, there are 3 augmented versions, with a total of 4. On the splitting of the dataset this very similar images are split into training and validation sets, leading to a situation where the model can easily memorize the augmented versions of the training data.
 
 Marked as possible because models like VGG16 jump from 25% in orginal dataset to a reasonable 75%. Models like Vgg16 Custom and MobileNetV2 reach almost 100% accuracy on the augmented dataset, which is suspicious.
+
+Split by person.
+
+Or split by 25% but ordered, not randomly
 
 ## Include more Models
 
@@ -64,7 +70,7 @@ Table of results comparing different models and their performance on the validat
 
 #### 2 evaluations:
 
-- Classification: `Accuracy, Precission, Recall and F1` over the validation set
+- Classification: `Accuracy, Precission, Recall and F1` over the validation set. Visualize confusion matrix for a couple of the best ones
 - Verification: Comparing faces 1:1 with binary classification (same or different person) using `Equal Error Rate (EER)` and `Area Under the Curve (AUC)` metrics.
 (ArcFace is producing 0.5 results, wrongly, because of the libraries limitations, requires a face detector to work properly, not compatible with the current setup on Colab)
 
